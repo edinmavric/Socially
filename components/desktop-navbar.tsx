@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { SignInButton, UserButton } from '@clerk/nextjs';
 import ModeToggle from './mode-toggle';
 import { currentUser } from '@clerk/nextjs/server';
+import { getUnreadNotificationCount } from '@/actions/notification.action';
 
 async function DesktopNavbar() {
     const user = await currentUser();
+    const unreadCount = await getUnreadNotificationCount();
 
     return (
         <div className="hidden md:flex items-center space-x-4">
@@ -27,7 +29,14 @@ async function DesktopNavbar() {
                         asChild
                     >
                         <Link href="/notifications">
-                            <BellIcon className="w-4 h-4" />
+                            <div className="relative">
+                                <BellIcon className="w-4 h-4" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </div>
                             <span className="hidden lg:inline">
                                 Notifications
                             </span>

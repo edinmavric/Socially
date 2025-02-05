@@ -17,15 +17,26 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth, SignInButton, SignOutButton } from '@clerk/nextjs';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
+import { getUnreadNotificationCount } from '@/actions/notification.action';
 
 function MobileNavbar() {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const { isSignedIn } = useAuth();
     const { theme, setTheme } = useTheme();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        async function fetchUnreadCount() {
+            const count = await getUnreadNotificationCount();
+            setUnreadCount(count);
+        }
+
+        fetchUnreadCount();
+    }, []);
 
     return (
         <div className="flex md:hidden items-center space-x-2">
@@ -43,7 +54,14 @@ function MobileNavbar() {
             <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
                 <SheetTrigger asChild>
                     <Button variant="ghost" size="icon">
-                        <MenuIcon className="h-5 w-5" />
+                        <div className="relative">
+                            <MenuIcon className="h-5 w-5" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">
+                                    {unreadCount}
+                                </span>
+                            )}
+                        </div>
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[300px]">
@@ -66,11 +84,18 @@ function MobileNavbar() {
                             <>
                                 <Button
                                     variant="ghost"
-                                    className="flex items-center gap-3 justify-start"
+                                    className="flex items-center gap-2 justify-start"
                                     asChild
                                 >
                                     <Link href="/notifications">
-                                        <BellIcon className="w-4 h-4" />
+                                        <div className="relative">
+                                            <BellIcon className="w-4 h-4" />
+                                            {unreadCount > 0 && (
+                                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">
+                                                    {unreadCount}
+                                                </span>
+                                            )}
+                                        </div>
                                         Notifications
                                     </Link>
                                 </Button>
