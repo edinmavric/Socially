@@ -26,7 +26,7 @@ const CreatePost = () => {
 
             if (!result) return;
 
-            if (result.success) {
+            if (result?.success) {
                 setContent('');
                 setImageUrl('');
                 setShowImageUpload(false);
