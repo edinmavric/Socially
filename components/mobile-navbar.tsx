@@ -18,7 +18,7 @@ import {
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { useEffect, useState } from 'react';
-import { useAuth, SignInButton, SignOutButton } from '@clerk/nextjs';
+import { useAuth, SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { getUnreadNotificationCount } from '@/actions/notification.action';
@@ -28,6 +28,13 @@ function MobileNavbar() {
     const { isSignedIn } = useAuth();
     const { theme, setTheme } = useTheme();
     const [unreadCount, setUnreadCount] = useState(0);
+    const { user } = useUser();
+    const profileLink = user
+        ? `/profile/${
+              user.username ??
+              user.primaryEmailAddress?.emailAddress.split('@')[0]
+          }`
+        : '/profile';
 
     useEffect(() => {
         async function fetchUnreadCount() {
@@ -53,7 +60,11 @@ function MobileNavbar() {
 
             <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowMobileMenu(false)}
+                    >
                         <div className="relative">
                             <MenuIcon className="h-5 w-5" />
                             {unreadCount > 0 && (
@@ -73,6 +84,7 @@ function MobileNavbar() {
                             variant="ghost"
                             className="flex items-center gap-3 justify-start"
                             asChild
+                            onClick={() => setShowMobileMenu(false)}
                         >
                             <Link href="/">
                                 <HomeIcon className="w-4 h-4" />
@@ -86,6 +98,7 @@ function MobileNavbar() {
                                     variant="ghost"
                                     className="flex items-center gap-2 justify-start"
                                     asChild
+                                    onClick={() => setShowMobileMenu(false)}
                                 >
                                     <Link href="/notifications">
                                         <div className="relative">
@@ -102,9 +115,10 @@ function MobileNavbar() {
                                 <Button
                                     variant="ghost"
                                     className="flex items-center gap-3 justify-start"
+                                    onClick={() => setShowMobileMenu(false)}
                                     asChild
                                 >
-                                    <Link href="/profile">
+                                    <Link href={profileLink}>
                                         <UserIcon className="w-4 h-4" />
                                         Profile
                                     </Link>
@@ -113,6 +127,7 @@ function MobileNavbar() {
                                     <Button
                                         variant="ghost"
                                         className="flex items-center gap-3 justify-start w-full"
+                                        onClick={() => setShowMobileMenu(false)}
                                     >
                                         <LogOutIcon className="w-4 h-4" />
                                         Logout
@@ -121,7 +136,11 @@ function MobileNavbar() {
                             </>
                         ) : (
                             <SignInButton mode="modal">
-                                <Button variant="default" className="w-full">
+                                <Button
+                                    variant="default"
+                                    className="w-full"
+                                    onClick={() => setShowMobileMenu(false)}
+                                >
                                     Sign In
                                 </Button>
                             </SignInButton>
