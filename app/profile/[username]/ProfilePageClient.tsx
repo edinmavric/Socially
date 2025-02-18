@@ -81,7 +81,7 @@ const ProfilePageClient = ({
   const handleEditSubmit = async () => {
     const formData = new FormData();
     Object.entries(editForm).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(key, String(value));
     });
 
     const result = await updateProfile(formData);
@@ -325,7 +325,7 @@ const ProfilePageClient = ({
               <DialogTitle>Followers</DialogTitle>
             </DialogHeader>
             <Card>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {followers.map((user) => (
                     <div
@@ -366,7 +366,7 @@ const ProfilePageClient = ({
               <DialogTitle>Following</DialogTitle>
             </DialogHeader>
             <Card>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {followings.map((user) => (
                     <div
@@ -450,7 +450,7 @@ const ProfilePageClient = ({
                   placeholder="Your personal website"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Label htmlFor="privacy">Public account</Label>
                   <Switch
