@@ -23,6 +23,7 @@ model User {
   image String?
   location String?
   website String?
+  privacy Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
